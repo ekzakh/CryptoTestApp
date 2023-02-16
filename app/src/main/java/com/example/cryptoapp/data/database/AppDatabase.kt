@@ -4,10 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.cryptoapp.data.models.CoinPriceInfo
+import com.example.cryptoapp.data.LocalDataSource
+import com.example.cryptoapp.data.network.models.CoinInfoDto
 
-@Database(entities = [CoinPriceInfo::class], version = 1, exportSchema = false)
-abstract class AppDatabase : RoomDatabase() {
+@Database(entities = [CoinInfoDbModel::class], version = 2, exportSchema = false)
+abstract class AppDatabase : RoomDatabase(), LocalDataSource {
     companion object {
 
         private var db: AppDatabase? = null
@@ -22,7 +23,8 @@ abstract class AppDatabase : RoomDatabase() {
                         context,
                         AppDatabase::class.java,
                         DB_NAME
-                    ).build()
+                    ).allowMainThreadQueries() //TODO remove after adding worker
+                        .build()
                 db = instance
                 return instance
             }

@@ -6,13 +6,30 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.cryptoapp.R
+import com.example.cryptoapp.data.app.CoinApplication
+import com.example.cryptoapp.data.database.AppDatabase
+import com.example.cryptoapp.data.mappers.CoinsMapper
+import com.example.cryptoapp.data.repository.CoinsRepositoryImpl
+import com.example.cryptoapp.databinding.ActivityCoinDetailBinding
+import com.example.cryptoapp.domain.usecases.GetCoinInfoListUseCase
+import com.example.cryptoapp.domain.usecases.GetCoinInfoUseCase
+import com.example.cryptoapp.domain.usecases.LoadDataUseCase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_coin_detail.*
 
 class CoinDetailActivity : AppCompatActivity() {
 
+    private val viewBinding by viewBinding(ActivityCoinDetailBinding::bind)
+
     private lateinit var viewModel: CoinViewModel
+    private val db by lazy {
+        (application as CoinApplication).database
+    }
+    private val repository = CoinsRepositoryImpl(db, CoinsMapper())
+    private val loadDataUseCase = LoadDataUseCase(repository)
+    private val getCoinInfoUseCase = GetCoinInfoUseCase(repository)
+    private val getCoinInfoListUseCase = GetCoinInfoListUseCase(repository)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,16 +39,22 @@ class CoinDetailActivity : AppCompatActivity() {
             return
         }
         val fromSymbol = intent.getStringExtra(EXTRA_FROM_SYMBOL)
-        viewModel = ViewModelProvider(this)[CoinViewModel::class.java]
+            ?: throw IllegalStateException("fromSymbol is required $this")
+        viewModel =
+            ViewModelFactory(loadDataUseCase, getCoinInfoListUseCase, getCoinInfoUseCase).create(
+                CoinViewModel::class.java
+            )
         viewModel.getDetailInfo(fromSymbol).observe(this, Observer {
-            tvPrice.text = it.price
-            tvMinPrice.text = it.lowDay
-            tvMaxPrice.text = it.highDay
-            tvLastMarket.text = it.lastMarket
-            tvLastUpdate.text = it.getFormattedTime()
-            tvFromSymbol.text = it.fromSymbol
-            tvToSymbol.text = it.toSymbol
-            Picasso.get().load(it.getFullImageUrl()).into(ivLogoCoin)
+            with(viewBinding) {
+                tvPrice.text = it.price
+                tvMinPrice.text = it.lowDay
+                tvMaxPrice.text = it.hightDay
+                tvLastMarket.text = it.lastMarket
+                tvLastUpdate.text = it.lastUpdate
+                tvFromSymbol.text = it.fromSymbol
+                tvToSymbol.text = it.toSymbol
+                Picasso.get().load(it.imageUrl).into(ivLogoCoin)
+            }
         })
     }
 
