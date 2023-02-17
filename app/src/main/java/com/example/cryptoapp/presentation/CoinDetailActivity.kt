@@ -25,7 +25,7 @@ class CoinDetailActivity : AppCompatActivity() {
         (application as CoinApplication).database
     }
     private val repository by lazy {
-        CoinsRepositoryImpl(db, CoinsMapper())
+        CoinsRepositoryImpl(db.coinPriceInfoDao(), CoinsMapper(), application)
     }
     private val loadDataUseCase by lazy {
         LoadDataUseCase(repository)

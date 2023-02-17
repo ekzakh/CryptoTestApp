@@ -24,7 +24,7 @@ class CoinPriceListActivity : AppCompatActivity() {
         (application as CoinApplication).database
     }
     private val repository by lazy {
-        CoinsRepositoryImpl(db, CoinsMapper())
+        CoinsRepositoryImpl(db.coinPriceInfoDao(), CoinsMapper(), application)
     }
     private val loadDataUseCase by lazy {
         LoadDataUseCase(repository)
@@ -50,6 +50,7 @@ class CoinPriceListActivity : AppCompatActivity() {
             }
         }
         viewBinding.rvCoinPriceList.adapter = adapter
+        viewBinding.rvCoinPriceList.itemAnimator = null
         viewModel =
             ViewModelFactory(loadDataUseCase, getCoinInfoListUseCase, getCoinInfoUseCase).create(
                 CoinViewModel::class.java
