@@ -3,19 +3,17 @@ package com.example.cryptoapp.presentation
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.example.cryptoapp.R
-import com.example.cryptoapp.presentation.adapters.CoinInfoAdapter
-import com.example.cryptoapp.data.network.models.CoinInfoDto
-import com.example.cryptoapp.databinding.ActivityCoinPrceListBinding
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.example.cryptoapp.data.app.CoinApplication
-import com.example.cryptoapp.data.database.AppDatabase
+import com.example.cryptoapp.R
+import com.example.cryptoapp.app.CoinApplication
 import com.example.cryptoapp.data.mappers.CoinsMapper
 import com.example.cryptoapp.data.repository.CoinsRepositoryImpl
+import com.example.cryptoapp.databinding.ActivityCoinPrceListBinding
+import com.example.cryptoapp.domain.entity.CoinInfo
 import com.example.cryptoapp.domain.usecases.GetCoinInfoListUseCase
 import com.example.cryptoapp.domain.usecases.GetCoinInfoUseCase
 import com.example.cryptoapp.domain.usecases.LoadDataUseCase
+import com.example.cryptoapp.presentation.adapters.CoinInfoAdapter
 
 class CoinPriceListActivity : AppCompatActivity() {
 
@@ -43,7 +41,7 @@ class CoinPriceListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_coin_prce_list)
         val adapter = CoinInfoAdapter(this)
         adapter.onCoinClickListener = object : CoinInfoAdapter.OnCoinClickListener {
-            override fun onCoinClick(coinInfo: CoinInfoDto) {
+            override fun onCoinClick(coinInfo: CoinInfo) {
                 val intent = CoinDetailActivity.newIntent(
                     this@CoinPriceListActivity,
                     coinInfo.fromSymbol
@@ -57,7 +55,7 @@ class CoinPriceListActivity : AppCompatActivity() {
                 CoinViewModel::class.java
             )
         viewModel.coinInfoList.observe(this, Observer {
-            adapter.coinInfoList = emptyList() //TODO
+            adapter.submitList(it)
         })
     }
 }

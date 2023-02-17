@@ -1,4 +1,4 @@
-package com.example.cryptoapp.data.app
+package com.example.cryptoapp.app
 
 import android.app.Application
 import android.content.Context

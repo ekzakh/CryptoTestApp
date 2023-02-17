@@ -5,11 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.cryptoapp.R
-import com.example.cryptoapp.data.app.CoinApplication
-import com.example.cryptoapp.data.database.AppDatabase
+import com.example.cryptoapp.app.CoinApplication
 import com.example.cryptoapp.data.mappers.CoinsMapper
 import com.example.cryptoapp.data.repository.CoinsRepositoryImpl
 import com.example.cryptoapp.databinding.ActivityCoinDetailBinding
@@ -26,10 +24,18 @@ class CoinDetailActivity : AppCompatActivity() {
     private val db by lazy {
         (application as CoinApplication).database
     }
-    private val repository = CoinsRepositoryImpl(db, CoinsMapper())
-    private val loadDataUseCase = LoadDataUseCase(repository)
-    private val getCoinInfoUseCase = GetCoinInfoUseCase(repository)
-    private val getCoinInfoListUseCase = GetCoinInfoListUseCase(repository)
+    private val repository by lazy {
+        CoinsRepositoryImpl(db, CoinsMapper())
+    }
+    private val loadDataUseCase by lazy {
+        LoadDataUseCase(repository)
+    }
+    private val getCoinInfoUseCase by lazy {
+        GetCoinInfoUseCase(repository)
+    }
+    private val getCoinInfoListUseCase by lazy {
+        GetCoinInfoListUseCase(repository)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
