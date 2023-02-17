@@ -4,11 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.cryptoapp.data.LocalDataSource
-import com.example.cryptoapp.data.network.models.CoinInfoDto
 
 @Database(entities = [CoinInfoDbModel::class], version = 2, exportSchema = false)
-abstract class AppDatabase : RoomDatabase(), LocalDataSource {
+abstract class AppDatabase : RoomDatabase() {
     companion object {
 
         private var db: AppDatabase? = null
