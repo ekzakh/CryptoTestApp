@@ -1,18 +1,10 @@
 package com.example.cryptoapp.app
 
 import android.app.Application
-import android.content.Context
-import com.example.cryptoapp.data.database.AppDatabase
+import com.example.cryptoapp.di.DaggerAppComponent
 
-class CoinApplication: Application() {
-    val database by lazy {
-        AppDatabase.getInstance(instance)
+class CoinApplication : Application() {
+    val component by lazy {
+        DaggerAppComponent.factory().create(this)
     }
-    lateinit var instance: Context
-
-    override fun onCreate() {
-        super.onCreate()
-        instance = this
-    }
-
 }

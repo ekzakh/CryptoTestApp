@@ -10,13 +10,14 @@ import com.example.cryptoapp.data.mappers.CoinsMapper
 import com.example.cryptoapp.domain.CoinsRepository
 import com.example.cryptoapp.domain.entity.CoinInfo
 import com.example.cryptoapp.workers.RefreshCoinsInfoWorker
+import javax.inject.Inject
 
-class CoinsRepositoryImpl(
+class CoinsRepositoryImpl @Inject constructor(
     private val coinDao: CoinPriceInfoDao,
     private val mapper: CoinsMapper,
     private val application: Application
-) :
-    CoinsRepository {
+) : CoinsRepository {
+
     override fun getCoinsInfoList(): LiveData<List<CoinInfo>> {
         val dbModelLiveData = coinDao.getPriceList()
         return Transformations.map(dbModelLiveData) { dbModel ->
@@ -34,10 +35,10 @@ class CoinsRepositoryImpl(
     override suspend fun loadData() {
         val workManager = WorkManager.getInstance(application)
         workManager.enqueueUniqueWork(
-                RefreshCoinsInfoWorker.NAME,
-                ExistingWorkPolicy.REPLACE,
-                RefreshCoinsInfoWorker.makeRequest()
-            )
+            RefreshCoinsInfoWorker.NAME,
+            ExistingWorkPolicy.REPLACE,
+            RefreshCoinsInfoWorker.makeRequest()
+        )
     }
 
 }

@@ -6,7 +6,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
-import com.example.cryptoapp.app.CoinApplication
+import com.example.cryptoapp.data.database.AppDatabase
 import com.example.cryptoapp.data.database.CoinPriceInfoDao
 import com.example.cryptoapp.data.mappers.CoinsMapper
 import com.example.cryptoapp.data.network.ApiFactory
@@ -19,7 +19,7 @@ class RefreshCoinsInfoWorker(
 ) : CoroutineWorker(context, workerParameters) {
 
     private val apiService: ApiService = ApiFactory.apiService
-    private val coinDao: CoinPriceInfoDao = (context as CoinApplication).database.coinPriceInfoDao()
+    private val coinDao: CoinPriceInfoDao = AppDatabase.getInstance(context).coinPriceInfoDao()
     private val mapper: CoinsMapper = CoinsMapper()
 
     override suspend fun doWork(): Result {

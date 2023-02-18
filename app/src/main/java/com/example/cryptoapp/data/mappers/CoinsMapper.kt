@@ -10,8 +10,9 @@ import com.google.gson.Gson
 import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.inject.Inject
 
-class CoinsMapper {
+class CoinsMapper @Inject constructor() {
 
     fun mapRawDataToNames(source: CoinInfoListOfData): List<String> {
         val namesList = mutableListOf<String>()
