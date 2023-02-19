@@ -6,7 +6,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkerParameters
-import com.example.cryptoapp.data.database.AppDatabase
 import com.example.cryptoapp.data.database.CoinPriceInfoDao
 import com.example.cryptoapp.data.mappers.CoinsMapper
 import com.example.cryptoapp.data.network.ApiFactory
@@ -14,13 +13,12 @@ import com.example.cryptoapp.data.network.ApiService
 import kotlinx.coroutines.delay
 
 class RefreshCoinsInfoWorker(
+    private val apiService: ApiService,
+    private val coinsDao: CoinPriceInfoDao,
+    private val mapper: CoinsMapper,
     context: Context,
     workerParameters: WorkerParameters
 ) : CoroutineWorker(context, workerParameters) {
-
-    private val apiService: ApiService = ApiFactory.apiService
-    private val coinDao: CoinPriceInfoDao = AppDatabase.getInstance(context).coinPriceInfoDao()
-    private val mapper: CoinsMapper = CoinsMapper()
 
     override suspend fun doWork(): Result {
         while (true) {
@@ -31,7 +29,7 @@ class RefreshCoinsInfoWorker(
                     val priceData = ApiFactory.apiService.getFullPriceList(fSyms = name)
                     val coinInfoDto = mapper.mapPriceInfoRawDataToDto(priceData)
                     val dbModels = mapper.mapDtoToDbModelList(coinInfoDto)
-                    coinDao.insertPriceList(dbModels)
+                    coinsDao.insertPriceList(dbModels)
                 }
             } catch (e: Exception) {
                 Log.e(NAME, "${e.message}")
