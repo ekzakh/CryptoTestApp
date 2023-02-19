@@ -17,7 +17,9 @@ class CoinPriceListActivity : AppCompatActivity() {
     private lateinit var viewModel: CoinViewModel
     private val viewBinding by viewBinding(ActivityCoinPrceListBinding::bind)
 
-    private val component = (application as CoinApplication).component
+    private val component by lazy {
+        (application as CoinApplication).component
+    }
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
