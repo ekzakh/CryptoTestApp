@@ -8,17 +8,20 @@ import com.example.cryptoapp.data.database.CoinPriceInfoDao
 import com.example.cryptoapp.data.mappers.CoinsMapper
 import com.example.cryptoapp.data.network.ApiService
 import javax.inject.Inject
+import javax.inject.Provider
 
 class RefreshCoinsInfoWorkerFactory @Inject constructor(
-    private val apiService: ApiService,
-    private val coinsDao: CoinPriceInfoDao,
-    private val mapper: CoinsMapper
+   private val workerFactoryProviders: @JvmSuppressWildcards Map<Class<out ListenableWorker>, Provider<ChildWorkerFactory>>
 ) : WorkerFactory() {
     override fun createWorker(
         appContext: Context,
         workerClassName: String,
         workerParameters: WorkerParameters
-    ): ListenableWorker? {
-        return RefreshCoinsInfoWorker(apiService, coinsDao, mapper, appContext, workerParameters)
+    ): ListenableWorker? = when (workerClassName) {
+        RefreshCoinsInfoWorker::class.qualifiedName -> {
+            val factory = workerFactoryProviders[RefreshCoinsInfoWorker::class.java]?.get()
+            factory?.create(appContext, workerParameters)
+        }
+        else -> throw IllegalArgumentException("Unknown worker class $workerClassName")
     }
 }

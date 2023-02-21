@@ -2,15 +2,13 @@ package com.example.cryptoapp.workers
 
 import android.content.Context
 import android.util.Log
-import androidx.work.CoroutineWorker
-import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.example.cryptoapp.data.database.CoinPriceInfoDao
 import com.example.cryptoapp.data.mappers.CoinsMapper
 import com.example.cryptoapp.data.network.ApiFactory
 import com.example.cryptoapp.data.network.ApiService
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 class RefreshCoinsInfoWorker(
     private val apiService: ApiService,
@@ -44,6 +42,16 @@ class RefreshCoinsInfoWorker(
 
         fun makeRequest(): OneTimeWorkRequest {
             return OneTimeWorkRequestBuilder<RefreshCoinsInfoWorker>().build()
+        }
+    }
+
+    class Factory @Inject constructor(
+        private val apiService: ApiService,
+        private val coinsDao: CoinPriceInfoDao,
+        private val mapper: CoinsMapper,
+    ): ChildWorkerFactory {
+        override fun create(context: Context, workerParameters: WorkerParameters): ListenableWorker {
+            return RefreshCoinsInfoWorker(apiService, coinsDao, mapper, context, workerParameters)
         }
     }
 }
