@@ -3,7 +3,7 @@ package com.example.cryptoapp.app
 import android.app.Application
 import androidx.work.Configuration
 import com.example.cryptoapp.di.DaggerAppComponent
-import com.example.cryptoapp.workers.RefreshCoinsInfoWorkerFactory
+import com.example.cryptoapp.workers.CoinWorkerFactory
 import javax.inject.Inject
 
 class CoinApplication : Application(), Configuration.Provider {
@@ -12,7 +12,7 @@ class CoinApplication : Application(), Configuration.Provider {
     }
 
     @Inject
-    lateinit var workerFactory: RefreshCoinsInfoWorkerFactory
+    lateinit var workerFactory: CoinWorkerFactory
 
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
